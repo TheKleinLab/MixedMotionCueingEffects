@@ -1,17 +1,19 @@
 __author__ = "jon mulle"
 
 from math import sqrt, pi, cos, sin
+from sdl2 import SDLK_SPACE
 
 import klibs
 from klibs.KLExceptions import TrialException
 from klibs import P
-from klibs.KLConstants import CIRCLE_BOUNDARY, EL_RIGHT_EYE, EL_LEFT_EYE, EL_BOTH_EYES, EL_SACCADE_END, NA
+from klibs.KLConstants import CIRCLE_BOUNDARY, EL_RIGHT_EYE, EL_LEFT_EYE, EL_BOTH_EYES, EL_SACCADE_END, NA, RC_KEYPRESS
 from klibs.KLUtilities import deg_to_px, flush, iterable, smart_sleep, boolean_to_logical
 from klibs.KLUtilities import line_segment_len as lsl
 from klibs.KLCommunication import any_key, ui_request, message
 from klibs.KLGraphics import fill, flip, blit, clear
 from klibs.KLGraphics.KLDraw import Rectangle, Circle, Line, Asterisk2, Triangle, Arrow, FixationCross
 from klibs.KLGraphics.KLAnimate import Animation
+from klibs.KLKeyMap import KeyMap
 
 TOP = "top"
 BOTTOM = "bottom"
@@ -119,15 +121,22 @@ class MixedMotionCueingEffects(klibs.Experiment):
 		pass
 
 	def setup_response_collector(self):
-		pass
-
-	def trial_prep(self):
-		# infer cue location based on starting axis (ie. left and top boxes are 'box 1', bottom and right are 'box 2'
+		# this next bit would normally be done in trial_prep() but this method gets called first. we're inferring the
+		# cue location based on starting axis (ie. left and top boxes are 'box 1', bottom and right are 'box 2'
 		if self.cue_location ==  BOX_1:
 			self.cue_location = LEFT if self.start_axis is H_START_AXIS else TOP
 		else:
 			self.cue_location = RIGHT if self.start_axis is H_START_AXIS else BOTTOM
 
+		self.rc.uses(RC_KEYPRESS)
+		self.rc.end_collection_event = "task end"
+		self.rc.keypress_listener.interrupts = True
+		self.rc.display_callback = self.display_refresh
+		self.rc.keypress_listener.key_map = KeyMap("speeded response", ["spacebar"], ["spacebar"], [SDLK_SPACE])
+		self.rc.display_args = [self.box_axis_during_target(), self.circle, None, self.target_location]
+		self.rc.flip = False
+
+	def trial_prep(self):
 		# self.el.drift_correct(fill_color=BLACK, target_img=self.cross_r)
 		self.evm.register_tickets([("cross fix end", 300),
 								   ("circle fix end", 1100),
@@ -135,9 +144,9 @@ class MixedMotionCueingEffects(klibs.Experiment):
 								   ("circle box end", 1600),
 								   ("animation end", 1900),
 								   ("asterisk end", 2060),
-								   ("task end", 4560)
+								   ("task end", 10560)
 		])
-		self.display_refresh(self.start_axis, self.cross_w)
+		self.display_refresh(self.start_axis, self.circle)
 
 	def trial(self):
 		flush()
@@ -173,21 +182,23 @@ class MixedMotionCueingEffects(klibs.Experiment):
 
 
 		while self.evm.before("asterisk end"):
-			if self.animation_trial:
-				if self.start_axis == V_START_AXIS:
-					display_axis = H_START_AXIS
-				if self.start_axis == H_START_AXIS:
-					display_axis = V_START_AXIS
-			else:
-				display_axis = self.start_axis
-			self.display_refresh(display_axis, self.circle)
+			self.display_refresh(self.box_axis_during_target(), self.circle)
 			self.jc_wait_time()
 			ui_request()
 
-		self.jc_saccade_data()
+		flush()
+		self.display_refresh(self.box_axis_during_target(), self.circle, target=self.target_location)
+
+		if P.saccade_response_cond:
+			self.jc_saccade_data()
+			keypress_rt = NA
+		if P.keypress_response_cond:
+			onset = self.evm.trial_time_ms
+			self.rc.collect()
+			keypress_rt = self.rc.keypress_listener.responses[0][1] - onset
+			fill()
 		clear()
 		smart_sleep(1000)
-
 		return {
 			"block_num": P.block_number,
 			"trial_num": P.trial_number,
@@ -196,28 +207,29 @@ class MixedMotionCueingEffects(klibs.Experiment):
 			"start_axis": self.start_axis,
 			"box_rotation": self.rotation_dir if self.animation_trial else NA,
 			"animation_trial": boolean_to_logical(self.animation_trial),
-			"target_acquired": boolean_to_logical(self.target_acquired)
+			"target_acquired": boolean_to_logical(self.target_acquired) if P.saccade_response_cond else NA,
+			"keypress_rt": keypress_rt
 		}
 
 	def trial_clean_up(self):
-		if P.trial_id:  # won't exist if trial recycled
+		if P.trial_id and P.saccade_response_cond:  # won't exist if trial recycled
 			for s in self.saccades:
 				s['trial_id'] = P.trial_id
 				s['participant_id'] = P.participant_id
 				self.db.init_entry('saccades', 't_{0}_saccade_{1}'.format(P.trial_number, self.saccades.index(s)))
 				for f in s: self.db.log(f, s[f])
 				self.db.insert()
+			self.saccades = []
+			self.target_acquired = False
 		self.current_frame = 0
-		self.saccades = []
-		self.target_acquired = False
-
 
 	def clean_up(self):
 		pass
 
-	def display_refresh(self, boxes=None, fixation=None, cue=None, target=None, event=None):
+	def display_refresh(self, boxes=None, fixation=None, cue=None, target=None):
+		if P.keypress_response_cond and self.evm.between("asterisk end", "task end"):
+			self.jc_wait_time()
 		fill()
-
 		if boxes is not None:
 			if iterable(boxes):
 				box_l = boxes
@@ -234,6 +246,10 @@ class MixedMotionCueingEffects(klibs.Experiment):
 
 		if cue:
 			blit(self.circle, 5, self.target_locs[cue])
+
+		if target:
+			blit(self.circle, 5, self.target_locs[target])
+
 		flip()
 
 	def jc_wait_time(self):
@@ -262,7 +278,10 @@ class MixedMotionCueingEffects(klibs.Experiment):
 						if lsl(gaze, P.screen_c) > self.fixation_boundary:
 							dist_from_target = lsl(gaze, self.target_locs[self.target_location])
 							accuracy = SACC_OUTSIDE if dist_from_target > self.fixation_boundary else SACC_INSIDE
-
+							if len(self.saccades):
+								duration = saccade.getStartTime() + 4 - self.saccades[-1]['end_time']
+							else:
+								duration = saccade.getStartTime() + 4 - target_onset
 							if len(self.saccades) < 3:
 								self.saccades.append({"rt": saccade.getStartTime() - target_onset,
 													  "accuracy": accuracy,
@@ -271,8 +290,18 @@ class MixedMotionCueingEffects(klibs.Experiment):
 													  "start_y": saccade.getStartGaze()[1],
 													  "end_x": saccade.getEndGaze()[0],
 													  "end_y": saccade.getEndGaze()[1],
-													  "duration":saccade.getEndTime() - saccade.getStartTime() + 4})
+													  "end_time": saccade.getEndTime(),
+													  "duration": duration})
 
 							if dist_from_target <= self.fixation_boundary:
 								self.target_acquired = True
 								break
+
+	def box_axis_during_target(self):
+		if self.animation_trial:
+			if self.start_axis == V_START_AXIS:
+				return H_START_AXIS
+			if self.start_axis == H_START_AXIS:
+				return V_START_AXIS
+		else:
+			return self.start_axis

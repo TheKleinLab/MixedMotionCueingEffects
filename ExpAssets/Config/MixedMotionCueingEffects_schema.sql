@@ -72,7 +72,8 @@ CREATE TABLE trials (
 	start_axis text not null,
 	box_rotation text not null,
 	animation_trial text not null,
-	target_acquired text not null
+	target_acquired text not null,
+	keypress_rt text not null
 );
 
 CREATE TABLE saccades (

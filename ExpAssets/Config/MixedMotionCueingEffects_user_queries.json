@@ -78,6 +78,7 @@
             "database_field": "handedness",
             "query": "Are right-handed, left-handed or ambidextrous? \nAnswer with (r)ight, (l)eft or (a)mbidextrous.",
             "accepted": ["r", "l", "a"],
+			"allow_null": false,
             "format": {
                 "type": "str",
                 "styles": {
