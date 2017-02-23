@@ -220,7 +220,7 @@ class MixedMotionCueingEffects(klibs.Experiment):
 				self.db.init_entry('saccades', 't_{0}_saccade_{1}'.format(P.trial_number, self.saccades.index(s)))
 				for f in s:
 					if f == "end_time":
-						pass
+						continue
 					self.db.log(f, s[f])
 				self.db.insert()
 			self.saccades = []
