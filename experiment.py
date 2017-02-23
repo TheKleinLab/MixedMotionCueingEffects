@@ -218,7 +218,10 @@ class MixedMotionCueingEffects(klibs.Experiment):
 				s['trial_id'] = P.trial_id
 				s['participant_id'] = P.participant_id
 				self.db.init_entry('saccades', 't_{0}_saccade_{1}'.format(P.trial_number, self.saccades.index(s)))
-				for f in s: self.db.log(f, s[f])
+				for f in s:
+					if f == "end_time":
+						pass
+					self.db.log(f, s[f])
 				self.db.insert()
 			self.saccades = []
 			self.target_acquired = False
