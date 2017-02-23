@@ -82,3 +82,4 @@ default_participant_fields_sf = [["userhash", "participant"], "random_seed", "se
 #########################################
 saccade_response_cond = False
 keypress_response_cond = True
+offset_size = 3
