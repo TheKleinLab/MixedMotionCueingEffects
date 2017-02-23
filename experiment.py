@@ -137,7 +137,7 @@ class MixedMotionCueingEffects(klibs.Experiment):
 		self.rc.flip = False
 
 	def trial_prep(self):
-		if P.saccade_resp_cond:
+		if P.saccade_response_cond:
 			self.el.drift_correct(fill_color=BLACK, target_img=self.cross_r)
 		self.evm.register_tickets([("cross fix end", 300),
 								   ("circle fix end", 1100),
