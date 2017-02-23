@@ -137,8 +137,7 @@ class MixedMotionCueingEffects(klibs.Experiment):
 		self.rc.flip = False
 
 	def trial_prep(self):
-		if P.saccade_response_cond:
-			self.el.drift_correct(fill_color=BLACK, target_img=self.cross_r)
+		self.el.drift_correct(fill_color=BLACK, target_img=self.cross_r)
 		self.evm.register_tickets([("cross fix end", 300),
 								   ("circle fix end", 1100),
 								   ("cue end", 1400),
@@ -214,6 +213,8 @@ class MixedMotionCueingEffects(klibs.Experiment):
 
 	def trial_clean_up(self):
 		if P.trial_id and P.saccade_response_cond:  # won't exist if trial recycled
+			print self.saccades
+			print "/n/n"
 			for s in self.saccades:
 				s['trial_id'] = P.trial_id
 				s['participant_id'] = P.participant_id
