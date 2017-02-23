@@ -137,7 +137,7 @@ class MixedMotionCueingEffects(klibs.Experiment):
 		self.rc.flip = False
 
 	def trial_prep(self):
-		# self.el.drift_correct(fill_color=BLACK, target_img=self.cross_r)
+		self.el.drift_correct(fill_color=BLACK, target_img=self.cross_r)
 		self.evm.register_tickets([("cross fix end", 300),
 								   ("circle fix end", 1100),
 								   ("cue end", 1400),
@@ -162,7 +162,7 @@ class MixedMotionCueingEffects(klibs.Experiment):
 
 		while self.evm.before("cue end"):
 			self.jc_wait_time()
-			self.display_refresh(self.start_axis, self.circle)
+			self.display_refresh(self.start_axis, self.circle, cue=self.cue_location)
 			ui_request()
 
 		while self.evm.before("circle box end"):

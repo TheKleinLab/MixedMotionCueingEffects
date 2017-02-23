@@ -19,7 +19,7 @@ screen_origin = (0,0)  # always (0,0) unless multiple displays in use
 #########################################
 # Available Hardware
 #########################################
-eye_tracker_available = False
+eye_tracker_available = True
 eye_tracking = True
 labjack_available = False
 labjacking = False
