@@ -80,6 +80,6 @@ default_participant_fields_sf = [["userhash", "participant"], "random_seed", "se
 #########################################
 # PROJECT-SPECIFIC VARS
 #########################################
-saccade_response_cond = False
-keypress_response_cond = True
-offset_size = 3
+saccade_response_cond = True
+keypress_response_cond = (saccade_response_cond == False)
+offset_size = 5

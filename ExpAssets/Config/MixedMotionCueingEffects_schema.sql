@@ -73,7 +73,20 @@ CREATE TABLE trials (
 	box_rotation text not null,
 	animation_trial text not null,
 	target_acquired text not null,
-	keypress_rt text not null
+	keypress_rt text not null,
+	moved_eyes text not null
+);
+
+CREATE TABLE trials_err (
+	id integer primary key autoincrement not null,
+	participant_id integer key not null,
+	block_num integer not null,
+	trial_num integer not null,
+	cue_location text not null,
+	target_location text not null,
+	start_axis text not null,
+	box_rotation text not null,
+	animation_trial text not null
 );
 
 CREATE TABLE saccades (
