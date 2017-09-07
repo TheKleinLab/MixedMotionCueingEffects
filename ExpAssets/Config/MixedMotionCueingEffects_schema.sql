@@ -67,6 +67,7 @@ CREATE TABLE trials (
 	participant_id integer key not null,
 	block_num integer not null,
 	trial_num integer not null,
+	session_type text not null,
 	cue_location text not null,
 	target_location text not null,
 	start_axis text not null,
@@ -82,11 +83,13 @@ CREATE TABLE trials_err (
 	participant_id integer key not null,
 	block_num integer not null,
 	trial_num integer not null,
+	session_type text not null,
 	cue_location text not null,
 	target_location text not null,
 	start_axis text not null,
 	box_rotation text not null,
-	animation_trial text not null
+	animation_trial text not null,
+	err_type text not null
 );
 
 CREATE TABLE saccades (

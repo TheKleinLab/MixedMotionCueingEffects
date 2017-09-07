@@ -1,5 +1,6 @@
 __author__ = 'jono'
 from klibs.KLIndependentVariable import IndependentVariableSet, IndependentVariable
+from klibs import P
 """
 *** SAMPLE CONFIGURATION - REMOVE AFTER FINISHING REAL CONFIG ***
 
@@ -70,6 +71,9 @@ MixedMotionCueingEffects_ind_vars = IndependentVariableSet()
 
 MixedMotionCueingEffects_ind_vars.add_variable("target_location", str)
 MixedMotionCueingEffects_ind_vars["target_location"].add_values("top", "bottom", "left", "right")
+if P.keypress_response_cond:
+	# If manual response session, have catch trials with no targets
+	MixedMotionCueingEffects_ind_vars["target_location"].add_value("none")
 
 MixedMotionCueingEffects_ind_vars.add_variable("start_axis", str)
 MixedMotionCueingEffects_ind_vars["start_axis"].add_values("horizontal", "vertical")

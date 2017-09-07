@@ -3,7 +3,16 @@ import logging
 # KlibsTesting Param overrides
 #
 # Any param that is commented out by default is either deprecated or else not yet implemented--don't uncomment or use
+
 #
+#########################################
+# PROJECT-SPECIFIC VARS
+#########################################
+saccade_response_cond = False
+keypress_response_cond = (saccade_response_cond == False)
+offset_size = 5
+slack_room = "#beta"
+
 #########################################
 # Logging Defaults
 #########################################
@@ -47,6 +56,7 @@ fixation_size = 1,  # deg of visual angle
 box_size = 1,  # deg of visual angle
 cue_size = 1,  # deg of visual angle
 cue_back_size = 1,  # deg of visual angle
+
 #
 #########################################
 # Experiment Structure
@@ -55,10 +65,15 @@ multi_session_project = False
 collect_demographics = True
 manual_demographics_collection = False
 practicing = False
-trials_per_block = 24
-blocks_per_experiment = 1
+if saccade_response_cond:
+	trials_per_block = 64 
+	blocks_per_experiment = 5
+else:
+	trials_per_block = 80
+	blocks_per_experiment = 4
 trials_per_participant = 0
 table_defaults = {}
+
 #
 #########################################
 # Development Mode Settings
@@ -74,12 +89,3 @@ dm_trial_show_mouse = True
 data_columns = None
 default_participant_fields = [["userhash", "participant"], "sex", "age", "handedness"]
 default_participant_fields_sf = [["userhash", "participant"], "random_seed", "sex", "age", "handedness"]
-
-
-#
-#########################################
-# PROJECT-SPECIFIC VARS
-#########################################
-saccade_response_cond = True
-keypress_response_cond = (saccade_response_cond == False)
-offset_size = 5
