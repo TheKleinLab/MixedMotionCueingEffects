@@ -161,11 +161,11 @@ class MixedMotionCueingEffects(klibs.Experiment):
 			any_key()
 		
 		# When running participants, send halfway point and last-block notifications to researcher via Slack
-		if not P.development_mode:
+		if P.slack_messaging and not P.development_mode:
 			if block_num == ((block_count+1)/2)+1: # If participant is halfway done
-				slack_message("Halfway done ({0}/{1})".format(block_num, block_count), channel=P.slack_room)
+				slack_message("Halfway done ({0}/{1})".format(block_num, block_count))
 			elif block_num == block_count: # If participant is on last block
-				slack_message("On last block ({0}/{1})".format(block_num, block_count), channel=P.slack_room)
+				slack_message("On last block ({0}/{1})".format(block_num, block_count))
 
 	def setup_response_collector(self):
 		# this next bit would normally be done in trial_prep() but this method gets called first. we're inferring the

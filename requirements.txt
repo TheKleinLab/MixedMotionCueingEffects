@@ -2,6 +2,5 @@
 
 # To be installed using "sudo -H pip install -r requirements.txt"
 
-slacker
 -e git://github.com/pytroll/aggdraw.git#egg=aggdraw
 -e git://github.com/a-hurst/klibs.git#egg=klibs

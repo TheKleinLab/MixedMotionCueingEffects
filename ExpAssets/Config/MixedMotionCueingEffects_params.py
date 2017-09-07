@@ -10,8 +10,8 @@ import logging
 #########################################
 saccade_response_cond = False
 keypress_response_cond = (saccade_response_cond == False)
-offset_size = 5
-slack_room = "#beta"
+offset_size = 5 # only used in development mode for fitting on smaller screens
+slack_messaging = True
 
 #########################################
 # Logging Defaults
