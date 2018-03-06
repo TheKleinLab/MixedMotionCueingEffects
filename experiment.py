@@ -6,7 +6,8 @@ __author__ = "jon mulle"
 import klibs
 from klibs.KLExceptions import TrialException
 from klibs import P
-from klibs.KLConstants import CIRCLE_BOUNDARY, EL_RIGHT_EYE, EL_LEFT_EYE, EL_BOTH_EYES, EL_SACCADE_END, EL_FALSE, NA, RC_KEYPRESS
+from klibs.KLConstants import (EL_RIGHT_EYE, EL_LEFT_EYE, EL_BOTH_EYES, EL_SACCADE_END, EL_FALSE,
+	NA, RC_KEYPRESS, CIRCLE_BOUNDARY, TIMEOUT)
 from klibs.KLUtilities import deg_to_px, flush, iterable, smart_sleep, boolean_to_logical, pump
 from klibs.KLUtilities import line_segment_len as lsl
 from klibs.KLCommunication import any_key, ui_request, message, slack_message
@@ -194,12 +195,12 @@ class MixedMotionCueingEffects(klibs.Experiment):
 		# Add timecourse of events to EventManager
 		self.evm.register_tickets([
 			("cross fix end", 300),
-			("circle fix end", 1100),
-			("cue end", 1400),
-			("circle box end", 1600),
-			("animation end", 1900),
-			("asterisk end", 2060),
-			("task end", 10560)
+			("circle fix end", 1100), 	#800ms after cross fix end
+			("cue end", 1400),			#300ms after circle fix end
+			("circle box end", 1600),	#200ms after cue end
+			("animation end", 1900),	#300ms after circle box end
+			("asterisk end", 2060),		#160ms after animation end
+			("task end", 4560)			#2500ms after asterisk end
 		])
 		
 		# Perform drift correct with red fixation cross, changing to white upon
@@ -254,7 +255,12 @@ class MixedMotionCueingEffects(klibs.Experiment):
 
 		smart_sleep(1000)
 		
-		if self.moved_eyes_during_rc:
+		if self.target_location == "none" and keypress_rt != TIMEOUT:
+			fill()
+			message(self.err_msgs['key'], registration=5, location=P.screen_c)
+			flip()
+			any_key()
+		elif self.moved_eyes_during_rc:
 			fill()
 			message("Moved eyes during response interval!", registration=5, location=P.screen_c)
 			flip()
@@ -318,7 +324,7 @@ class MixedMotionCueingEffects(klibs.Experiment):
 			blit(fixation, 5, P.screen_c)
 
 		if cue:
-			blit(self.circle, 5, self.target_locs[cue])
+			blit(self.asterisk, 5, self.target_locs[cue])
 
 		if target:
 			if target != "none": # if not catch trial, show target
