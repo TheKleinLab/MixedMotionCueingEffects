@@ -8,7 +8,7 @@
         {
             "title": "name",
             "database_field": "userhash",
-            "query": "What is your full name, banner number or e-mail address? \nYour answer will be encrypted and cannot be read later.",
+            "query": "What is your full name, banner number or e-mail address?\nYour answer will be encrypted and cannot be read later.",
             "accepted": null,
             "allow_null": false,
             "format": {
@@ -42,7 +42,7 @@
         {
             "title": "sex",
             "database_field": "sex",
-            "query": "What is your sex? \nAnswer with:  (m)ale,(f)emale",
+            "query": "What is your sex?\nAnswer with: (m)ale or (f)emale.",
             "accepted": ["m", "f"],
             "allow_null": false,
             "format": {
@@ -76,7 +76,7 @@
         {
             "title": "handedness",
             "database_field": "handedness",
-            "query": "Are right-handed, left-handed or ambidextrous? \nAnswer with (r)ight, (l)eft or (a)mbidextrous.",
+            "query": "Are you right-handed, left-handed or ambidextrous?\nAnswer with (r)ight, (l)eft or (a)mbidextrous.",
             "accepted": ["r", "l", "a"],
 			"allow_null": false,
             "format": {
@@ -138,7 +138,7 @@
                 "accept_as_true": null,
                 "action": null
             },
-            "anonymous_value": 1,
+            "anonymous_value": -1,
             "active": true
         }
     ],

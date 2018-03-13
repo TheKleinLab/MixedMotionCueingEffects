@@ -1,30 +1,25 @@
-import random
-import logging
-# KlibsTesting Param overrides
-#
-# Any param that is commented out by default is either deprecated or else not yet implemented--don't uncomment or use
+### Klibs Parameter overrides ###
 
-#
+from klibs import P
+
 #########################################
-# PROJECT-SPECIFIC VARS
+# Runtime Settings
 #########################################
-saccade_response_cond = False
-keypress_response_cond = (saccade_response_cond == False)
-offset_size = 5 # only used in development mode for fitting on smaller screens
+collect_demographics = True
+manual_demographics_collection = False
+manual_trial_generation = False
+run_practice_blocks = True
+multi_user = False
+view_distance = 57 # in centimeters, 57cm = 1 deg of visual angle per cm of screen
 slack_messaging = True
 
 #########################################
-# Logging Defaults
+# PROJECT-SPECIFIC VARS
 #########################################
-log_to_file = True
-level = logging.INFO
+saccade_response_cond = P.condition == 'saccade' # defaults to 'keypress' unless specified
+keypress_response_cond = (saccade_response_cond == False)
+dm_offset_size = 5 # box offset for devmode, useful for testing on smaller screens
 
-#########################################
-# Display Settings
-#########################################
-additional_displays = []
-screen_origin = (0,0)  # always (0,0) unless multiple displays in use
-#
 #########################################
 # Available Hardware
 #########################################
@@ -32,39 +27,30 @@ eye_tracker_available = True
 eye_tracking = True
 labjack_available = False
 labjacking = False
-#
+
 #########################################
 # Environment Aesthetic Defaults
 #########################################
 default_fill_color = (0, 0, 0, 255)
 default_color = (255, 255, 255, 255)
-default_response_color = default_color
-default_input_color = default_color
 default_font_size = 28
 default_font_name = 'Frutiger'
-default_timeout_message = "Too slow!"
-#
+
 #########################################
-# EyeLink Sensitivities
+# EyeLink Settings
 #########################################
-view_distance = 57  # in centimeters, 57m = in 1deg of visual angle per horizontal cm of screen
+manual_eyelink_setup = False
+manual_eyelink_recording = False
+show_gaze_dot = False
+
 saccadic_velocity_threshold = 20
 saccadic_acceleration_threshold = 5000
 saccadic_motion_threshold = 0.15
-#
-fixation_size = 1,  # deg of visual angle
-box_size = 1,  # deg of visual angle
-cue_size = 1,  # deg of visual angle
-cue_back_size = 1,  # deg of visual angle
 
-#
 #########################################
 # Experiment Structure
 #########################################
 multi_session_project = False
-collect_demographics = True
-manual_demographics_collection = False
-practicing = False
 if saccade_response_cond:
 	trials_per_block = 64 
 	blocks_per_experiment = 5
@@ -72,20 +58,21 @@ else:
 	trials_per_block = 80
 	blocks_per_experiment = 4
 trials_per_participant = 0
+conditions = ['saccade', 'keypress']
 table_defaults = {}
 
-#
 #########################################
 # Development Mode Settings
 #########################################
-dm_suppress_debug_pane = False
 dm_auto_threshold = True
 dm_trial_show_mouse = True
+dm_ignore_local_overrides = False
+dm_show_gaze_dot = True
 
-#
 #########################################
 # Data Export Settings
 #########################################
-data_columns = None
-default_participant_fields = [["userhash", "participant"], "sex", "age", "handedness"]
-default_participant_fields_sf = [["userhash", "participant"], "random_seed", "sex", "age", "handedness"]
+primary_table = "trials"
+unique_identifier = "userhash"
+default_participant_fields = [[unique_identifier, "participant"], "sex", "age", "handedness"]
+default_participant_fields_sf = [[unique_identifier, "participant"], "random_seed", "sex", "age", "handedness"]
