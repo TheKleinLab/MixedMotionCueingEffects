@@ -1,6 +1,5 @@
-### Required Libraries for MixedMotionCueing Effects ###
+### Required Libraries for MixedMotionCueingEffects ###
 
 # To be installed using "sudo -H pip install -r requirements.txt"
 
--e git://github.com/pytroll/aggdraw.git#egg=aggdraw
 -e git://github.com/a-hurst/klibs.git#egg=klibs

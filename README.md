@@ -6,10 +6,13 @@ The experiment also compares performance in the different motion conditions betw
 
 ![MixedMotionCueingEffects](https://github.com/TheKleinLab/MixedMotionCueingEffects/raw/master/mmce.gif)
 
+**NOTE**: This experiment program has been slightly modified from its original version. Specifically, it has been modified to ask participants their gender instead of their sex during demographics collection. The original code can still be examined and downloaded [here](https://github.com/TheKleinLab/MixedMotionCueingEffects/tree/cdc3851001b23e04880c79dd4d508ba00a8b7984).
 
 ## Requirements
 
 MixedMotionCueingEffects is programmed in Python 2.7 using the [KLibs framework](https://github.com/a-hurst/klibs). It has been developed and tested on macOS (10.9 through 10.13), but should also work with minimal hassle on computers running [Ubuntu](https://www.ubuntu.com/download/desktop) or [Debian](https://www.debian.org/distrib/) Linux. It is not currently compatible with any version of Windows, nor will it run under the [Windows Subsystem for Linux](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide).
+
+The experiment is designed to be run with an EyeLink eye tracker, but it can be downloaded and tested without one (using the mouse cursor as a stand-in for gaze position) by adding the flag `-ELx` to the `klibs run` command.
 
 ## Getting Started
 
@@ -24,6 +27,8 @@ cd ~/Downloads
 git clone https://github.com/TheKleinLab/MixedMotionCueingEffects.git
 ```
 
+If you intend to run this experiment with an EyeLink eye tracker, you will also need to install the EyeLink Developer's Kit for your OS (available on the SR Support forums [here](https://www.sr-support.com/forum/downloads/eyelink-display-software)) and make sure the 'pylink' module has been properly installed.
+
 ### Running the Experiment
 
 MixedMotionCueingEffects is a KLibs experiment, meaning that it is run using the `klibs` command at the terminal (running the 'experiment.py' file using python directly will not work).
@@ -33,7 +38,7 @@ replacing `[screensize]` with the diagonal size of your display in inches (e.g. 
 
 #### Optional Settings
 
-In the experiment, participants are placed into one of two response conditions: the **keypress** conditon, where participant responds to targets using the space bar while keeping their eyes in the middle of the screen, or the **saccade** condition, where the participant responds to targets by making saccades towards them.
+In the experiment, participants are placed into one of two response conditions: the **keypress** conditon, where they respond to targets using the space bar while keeping their eyes in the middle of the screen, or the **saccade** condition, where they respond to targets by making saccades towards them.
 
 To choose which condition to run, launch the experiment with the `--condition` or `-c` flag, followed by either `keypress` or `saccade`. For example, if you wanted to run the saccade response condition on a computer with a 19-inch monitor, you would run 
 
@@ -42,3 +47,17 @@ klibs run 19 --condition saccade
 ```
 
 If no condition is manually specified, the experiment program defaults to running the keypress response condition.
+
+### Exporting Data
+
+To export data from MixedMotionCueingEffects, simply run 
+
+```
+klibs export
+```
+while in the MixedMotionCueingEffects directory. This will export the trial data for each participant into individual tab-separated text files in the project's `ExpAssets/Data` subfolder. If you want to export the trial error data (a log of the trials on which participants made an error that caused the trial to be recycled) or the saccade data (the saccades that participants made on each trial), you can similarly export those using 
+
+```
+klibs export -t trials_err  # for trial error data
+klibs export -t saccades  # for saccade data
+```
